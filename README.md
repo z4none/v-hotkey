@@ -2,15 +2,14 @@
 
 Vue 2.x directive for binding hotkeys to components.
 
-## Play with me
+Forked from https://github.com/Dafrok/v-hotkey
 
-[https://dafrok.github.io/v-hotkey](https://dafrok.github.io/v-hotkey)
+Add input filter support.
 
-## Install
+## Demo
 
-```bash
-$ npm i --save v-hotkey
-```
+[https://z4none.github.io/v-hotkey](https://z4none.github.io/v-hotkey)
+
 
 ## Usage
 
@@ -51,7 +50,8 @@ export default {
         'ctrl+esc': this.toggle,
         'enter': {
           keydown: this.hide,
-          keyup: this.show
+          keyup: this.show,
+          filter: true
         }
       }
     }
@@ -64,6 +64,13 @@ export default {
 
 - keydown (as default) 
 - keyup
+- filter (true or function)
+
+If filter is true, events will be filted while input control (INPUT, SELECT, TEXTAERA) is focused;
+
+If filter is a function, events will be filted if the function returns true, the arguments of the function is the event object;
+
+Otherwise events won't be filted(as default);
 
 ## Key Combination
 

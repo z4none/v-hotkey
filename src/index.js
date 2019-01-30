@@ -2,7 +2,7 @@ import keyCode from './keycode'
 
 const getKeyMap = keymap => Object.keys(keymap).map(input => {
   const result = {}
-  const {keyup, keydown} = keymap[input]
+  const { keyup, keydown, filter } = keymap[input]
   input.replace('numpad +', 'numpad add').split('+').forEach(keyName => {
     switch (keyName.toLowerCase()) {
       case 'ctrl':
@@ -17,7 +17,8 @@ const getKeyMap = keymap => Object.keys(keymap).map(input => {
   })
   result.callback = {
     keydown: keydown || keymap[input],
-    keyup
+    keyup,
+    filter
   }
   return result
 })
@@ -32,7 +33,23 @@ function bindEvent (el, binding) {
         !!hotkey.shift === e.shiftKey &&
         !!hotkey.meta === e.metaKey &&
         hotkey.callback[e.type]
-      callback && callback(e)
+      if (callback) {
+        const filter = hotkey.callback.filter
+
+        if (filter) {
+          if (filter === true) {
+            let target = (e.target || e.srcElement)
+            if (target.isContentEditable || target.tagName === 'INPUT' || target.tagName === 'SELECT' || target.tagName === 'TEXTAREA') {
+              return
+            }
+          }
+          if (typeof filter === 'function' && filter(e)) {
+            return
+          }
+        }
+
+        callback(e)
+      }
     }
   }
   document.addEventListener('keydown', el._keyHandler)
